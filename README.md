@@ -8,8 +8,8 @@
 
 ## Ссылки на проект
 
-IP-адрес x.x.x.x
+IP-адрес 158.160.6.98
 
-Frontend https://...
+Frontend https://mesto.nikita.nomoredomains.work
 
-Backend https://...
+Backend https://api.mesto.nikita.nomoredomains.work
