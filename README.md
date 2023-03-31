@@ -8,7 +8,7 @@
 
 ## Ссылки на проект
 
-158.160.6.98
+IP 158.160.6.98
 
 Frontend https://mesto.nikita.nomoredomains.work
 
