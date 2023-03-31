@@ -8,6 +8,7 @@ const { NotFoundError } = require('./errors');
 const { login, createUser } = require('./controllers/users');
 
 const auth = require('./middlewares/auth');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const validationUser = celebrate({
   body: Joi.object().keys({
@@ -31,6 +32,8 @@ mongoose.connect(process.env.MONGO_DB, {
   useNewUrlParser: true,
 });
 
+app.use(requestLogger);
+
 app.post('/signin', celebrate({
   body: Joi.object().keys({
     email: Joi.string().email().required(),
@@ -44,9 +47,17 @@ app.use('/users', auth, require('./routes/users'));
 
 app.use('/cards', auth, require('./routes/cards'));
 
+app.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Сервер сейчас упадёт');
+  }, 0);
+});
+
 app.use(auth, router.use('*', (req, res, next) => {
   next(new NotFoundError('Not Found'));
 }));
+
+app.use(errorLogger);
 
 app.use(errors());
 
