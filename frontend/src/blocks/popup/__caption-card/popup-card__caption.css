@@ -1,0 +1,14 @@
+.popup__caption-card {
+  position: absolute;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 15px;
+  margin: 0;
+  bottom: -20px;
+  left: 0px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 70%;
+}

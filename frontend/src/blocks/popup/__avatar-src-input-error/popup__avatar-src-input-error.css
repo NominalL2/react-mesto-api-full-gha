@@ -1,0 +1,23 @@
+.popup__avatar-src-input-error {
+  display: block;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 15px;
+  color: #FF0000;
+  position: absolute;
+  top: calc(51% + 2px);
+  left: calc(8% + 2px);
+}
+
+@media screen and (max-width: 768px) {
+  .popup__avatar-src-input-error {
+    top: calc(53% + 2px);
+  }
+}
+
+@media screen and (max-width:320px) {
+  .popup__avatar-src-input-error {
+    top: calc(57% + 2px);
+  }
+}

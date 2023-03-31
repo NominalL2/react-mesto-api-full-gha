@@ -1,0 +1,14 @@
+.popup__input_card-src {
+  padding-bottom: 10px;
+  margin-bottom: 48px;
+}
+
+.popup__input_card-src::placeholder {
+  color: #C4C4C4;
+}
+
+@media screen and (max-width:320px) {
+  .popup__input_card-src {
+    margin-bottom: 44px;
+  }
+}

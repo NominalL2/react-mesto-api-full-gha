@@ -1,0 +1,10 @@
+.popup__input_status {
+  padding-bottom: 10px;
+  margin-bottom: 48px;
+}
+
+@media screen and (max-width:320px) {
+  .popup__input_status {
+    margin-bottom: 44px;
+  }
+}

@@ -1,0 +1,10 @@
+.element__counter {
+  position: absolute;
+  bottom: 20px;
+  right: 27px;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 16px;
+  color: black;
+}

@@ -1,0 +1,10 @@
+{
+  "extends": "airbnb-base",
+
+  "rules": {
+    "no-underscore-dangle": "off",
+    "max-classes-per-file": "off",
+    "consistent-return": "off",
+    "eqeqeq": "off"
+  }
+}

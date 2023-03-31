@@ -1,0 +1,17 @@
+.popup__card-name-input-error {
+  display: none;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 15px;
+  color: #FF0000;
+  position: absolute;
+  top: calc(42% + 2px);
+  left: calc(8% + 2px);
+}
+
+@media screen and (max-width:320px) {
+  .popup__card-name-input-error {
+    top: calc(47% + 2px);
+  }
+}

@@ -1,0 +1,9 @@
+.popup__input_card-name {
+  padding-bottom: 8px;
+  margin-bottom: 32px;
+
+}
+
+.popup__input_card-name::placeholder {
+  color: #C4C4C4;
+}

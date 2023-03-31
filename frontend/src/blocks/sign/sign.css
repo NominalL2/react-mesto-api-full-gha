@@ -1,0 +1,7 @@
+.sign {
+    margin: auto;
+    margin-top: 59px;
+    max-width: 358px;
+    display: flex;
+    flex-direction: column;
+}

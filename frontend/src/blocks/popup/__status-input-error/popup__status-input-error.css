@@ -1,0 +1,17 @@
+.popup__status-input-error {
+  display: none;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 15px;
+  color: #FF0000;
+  position: absolute;
+  top: calc(60% + 2px);
+  left: calc(8% + 2px);
+}
+
+@media screen and (max-width: 320px) {
+  .popup__status-input-error {
+    top: calc(64% + 2px);
+  }
+}

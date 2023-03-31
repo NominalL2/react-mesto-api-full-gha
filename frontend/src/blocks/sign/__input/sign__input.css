@@ -1,0 +1,15 @@
+.sign__input {
+    border: none;
+    color: white;
+    background-color: black;
+    border-bottom: 2px solid #CCCCCC ;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 17px;
+    width: 99%;
+}
+
+.sign__input:focus {
+    outline: none;
+}
