@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const { celebrate, Joi, errors } = require('celebrate');
+const cookieParser = require('cookie-parser');
 
 const NotFoundError = require('./errors/NotFoundError');
 const { login, createUser } = require('./controllers/users');
@@ -28,6 +29,8 @@ const { PORT = '3000' } = process.env;
 const app = express();
 
 app.use(express.json());
+
+app.use(cookieParser);
 
 mongoose.connect(MONGO_DB, {
   useNewUrlParser: true,
@@ -69,7 +72,7 @@ app.use((err, req, res, next) => {
     .status(statusCode)
     .json({
       message: statusCode === 500
-        ? message
+        ? 'На сервере произошла ошибка'
         : message,
     });
 
