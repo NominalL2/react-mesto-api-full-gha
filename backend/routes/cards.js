@@ -1,6 +1,8 @@
 const router = require('express').Router();
 const { celebrate, Joi, Segments } = require('celebrate');
 
+const { linkPattern, idPattern } = require('../constants');
+
 const {
   getCards,
   postCard,
@@ -11,7 +13,7 @@ const {
 
 const cardIdValidation = celebrate({
   [Segments.PARAMS]: Joi.object().keys({
-    cardId: Joi.string().required().regex(/^[0-9a-fA-F]{24}$/),
+    cardId: Joi.string().required().regex(idPattern),
   }),
 });
 
@@ -20,7 +22,7 @@ router.get('/', getCards);
 router.post('/', celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30).required(),
-    link: Joi.string().required().pattern(/^(http|https):\/\/([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/[a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=]*#?)?$/),
+    link: Joi.string().required().pattern(linkPattern),
   }),
 }), postCard);
 

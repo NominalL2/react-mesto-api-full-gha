@@ -1,13 +1,12 @@
 const Card = require('../models/card');
-const {
-  NotFoundError,
-  IncorrectError,
-  AccessDeniedError,
-} = require('../errors');
+
+const NotFoundError = require('../errors/NotFoundError');
+const IncorrectError = require('../errors/IncorrectError');
+const AccessDeniedError = require('../errors/AccessDeniedError');
 
 module.exports.getCards = async (req, res, next) => {
   try {
-    const cards = await Card.find();
+    const cards = await Card.find().populate('owner').populate('likes');
     res.json(cards);
   } catch (error) {
     next(error);
@@ -22,7 +21,8 @@ module.exports.postCard = async (req, res, next) => {
 
   try {
     const newCard = await card.save();
-    res.status(201).json(newCard);
+    const foundCard = await Card.findById(newCard).populate('owner').populate('likes');
+    res.status(201).json(foundCard);
   } catch (error) {
     if (error.name === 'ValidationError') {
       next(new IncorrectError('ValidationError'));
@@ -38,10 +38,11 @@ module.exports.deleteCard = async (req, res, next) => {
 
   try {
     const card = await Card.findById(cardId);
+    const ownerId = card.owner._id.toString();
 
     if (!card) {
       throw new NotFoundError('Карточка не найдена');
-    } else if (card.owner != userId) {
+    } else if (ownerId !== userId) {
       throw new AccessDeniedError('Нельзя удалить чужую карточку');
     } else {
       await card.deleteOne();
@@ -65,7 +66,7 @@ module.exports.likeCard = async (req, res, next) => {
       cardId,
       { $addToSet: { likes: userId } },
       { new: true },
-    );
+    ).populate('owner').populate('likes');
 
     if (!like) {
       throw new NotFoundError('Карточка не найдена');
@@ -90,7 +91,7 @@ module.exports.dislikeCard = async (req, res, next) => {
       cardId,
       { $pull: { likes: userId } },
       { new: true },
-    );
+    ).populate('owner').populate('likes');
 
     if (!dislike) {
       throw new NotFoundError('Карточка не найдена');

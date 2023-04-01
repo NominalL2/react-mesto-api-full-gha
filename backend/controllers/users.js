@@ -1,19 +1,20 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
-const {
-  NotFoundError,
-  IncorrectError,
-  ExistsEmailError,
-  AuthorizationError,
-} = require('../errors');
+
+const NotFoundError = require('../errors/NotFoundError');
+const IncorrectError = require('../errors/IncorrectError');
+const ExistsEmailError = require('../errors/ExistsEmailError');
+const AuthorizationError = require('../errors/AuthorizationError');
+
+const { JWT_SECRET } = require('../constants');
 
 module.exports.getUsers = async (req, res, next) => {
   try {
     const users = await User.find();
     res.json(users);
   } catch (error) {
-    next();
+    next(error);
   }
 };
 
@@ -109,21 +110,14 @@ module.exports.createUser = async (req, res, next) => {
   } = req.body;
 
   try {
-    const findEmail = await User.findOne({ email });
-
-    if (findEmail) {
-      throw new ExistsEmailError('Пользователь с этой почтой уже существует');
-    }
-
     const hash = await bcrypt.hash(password, 10);
-    const user = new User({
+    const newUser = await User.create(new User({
       name,
       about,
       avatar,
       email,
       password: hash,
-    });
-    const newUser = await user.save();
+    }));
 
     res.status(201).json({
       name: newUser.name,
@@ -135,6 +129,8 @@ module.exports.createUser = async (req, res, next) => {
   } catch (error) {
     if (error.name === 'ValidationError') {
       next(new IncorrectError('ValidationError'));
+    } else if (error.code === 11000) {
+      next(new ExistsEmailError('Пользователь с этой почтой уже существует'));
     } else {
       next(error);
     }
@@ -157,7 +153,7 @@ module.exports.login = async (req, res, next) => {
 
     const token = jwt.sign(
       { _id: user._id },
-      process.env.JWT_SECRET,
+      JWT_SECRET,
       { expiresIn: '7d' },
     );
     res.cookie(
@@ -165,7 +161,7 @@ module.exports.login = async (req, res, next) => {
       token,
       { maxAge: 3600000 * 24 * 7 },
       { httpOnly: true },
-    ).json({ token });
+    ).json({ message: 'Вход прошел успешно' });
   } catch (error) {
     next(error);
   }

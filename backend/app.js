@@ -1,20 +1,21 @@
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
 const { celebrate, Joi, errors } = require('celebrate');
 
-const { NotFoundError } = require('./errors');
+const NotFoundError = require('./errors/NotFoundError');
 const { login, createUser } = require('./controllers/users');
 
 const auth = require('./middlewares/auth');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
+const { linkPattern, MONGO_DB } = require('./constants');
+
 const validationUser = celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string().pattern(/^(http|https):\/\/([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/[a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=]*#?)?$/),
+    avatar: Joi.string().pattern(linkPattern),
     email: Joi.string().email().required(),
     password: Joi.string().required(),
   }),
@@ -26,9 +27,9 @@ const { PORT = '3000' } = process.env;
 
 const app = express();
 
-app.use(bodyParser.json());
+app.use(express.json());
 
-mongoose.connect(process.env.MONGO_DB, {
+mongoose.connect(MONGO_DB, {
   useNewUrlParser: true,
 });
 
@@ -68,7 +69,7 @@ app.use((err, req, res, next) => {
     .status(statusCode)
     .json({
       message: statusCode === 500
-        ? 'На сервере поизошла ошибка'
+        ? message
         : message,
     });
 
