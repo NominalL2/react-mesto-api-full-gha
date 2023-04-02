@@ -9,12 +9,15 @@ module.exports = (req, res, next) => {
   let payload;
 
   try {
+    if (!token) {
+      return next(new AuthorizationError('Необходима авторизация'));
+    }
     payload = jwt.verify(token, JWT_SECRET);
   } catch (error) {
-    next(new AuthorizationError('Необходима авторизация'));
+    return next(new AuthorizationError('Необходима авторизация'));
   }
 
   req.user = payload;
 
-  next();
+  return next();
 };

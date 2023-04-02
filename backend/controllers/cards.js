@@ -6,7 +6,7 @@ const AccessDeniedError = require('../errors/AccessDeniedError');
 
 module.exports.getCards = async (req, res, next) => {
   try {
-    const cards = await Card.find().populate('owner').populate('likes');
+    const cards = await Card.find().populate(['owner', 'likes']);
     res.json(cards);
   } catch (error) {
     next(error);
@@ -21,7 +21,7 @@ module.exports.postCard = async (req, res, next) => {
 
   try {
     const newCard = await card.save();
-    const foundCard = await Card.findById(newCard).populate('owner').populate('likes');
+    const foundCard = await Card.findById(newCard).populate(['owner', 'likes']);
     res.status(201).json(foundCard);
   } catch (error) {
     if (error.name === 'ValidationError') {

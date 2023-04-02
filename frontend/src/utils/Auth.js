@@ -35,15 +35,6 @@ class Auth {
             },
             body: JSON.stringify({ password, email })
         })
-            .then((data) => {
-                if (data.token) {
-                    localStorage.setItem('jwt', data.token)
-                    return data
-                }
-            })
-            .catch((err) => {
-                console.log(err)
-            })
     }
 
     checkToken(jwt) {

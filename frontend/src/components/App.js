@@ -149,6 +149,12 @@ function App() {
 
   function handleLogin(password, email) {
     auth.login(password, email)
+      .then((data) => {
+        if (data.token) {
+          localStorage.setItem('jwt', data.token)
+          return data
+        }
+      })
       .then(() => {
         setHeaderInfo({ link: '/sign-in', title: 'Выйти', email: email })
         navigate('/mesto', setLoggedIn(true));
