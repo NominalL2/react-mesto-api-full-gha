@@ -1,26 +1,22 @@
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
-const { celebrate, Joi, errors } = require('celebrate');
+const { errors } = require('celebrate');
 const cookieParser = require('cookie-parser');
 
 const NotFoundError = require('./errors/NotFoundError');
 const { login, createUser } = require('./controllers/users');
 
 const auth = require('./middlewares/auth');
+const errorHandling = require('./middlewares/errorHandling');
+
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
-const { linkPattern, MONGO_DB } = require('./constants');
-
-const validationUser = celebrate({
-  body: Joi.object().keys({
-    name: Joi.string().min(2).max(30),
-    about: Joi.string().min(2).max(30),
-    avatar: Joi.string().pattern(linkPattern),
-    email: Joi.string().email().required(),
-    password: Joi.string().required(),
-  }),
-});
+const { MONGO_DB } = require('./constants');
+const {
+  signupValidation,
+  signinValidation,
+} = require('./validation');
 
 const router = express.Router();
 
@@ -30,7 +26,7 @@ const app = express();
 
 app.use(express.json());
 
-app.use(cookieParser);
+app.use(cookieParser());
 
 mongoose.connect(MONGO_DB, {
   useNewUrlParser: true,
@@ -38,14 +34,9 @@ mongoose.connect(MONGO_DB, {
 
 app.use(requestLogger);
 
-app.post('/signin', celebrate({
-  body: Joi.object().keys({
-    email: Joi.string().email().required(),
-    password: Joi.string().required(),
-  }),
-}), login);
+app.post('/signin', signinValidation, login);
 
-app.post('/signup', validationUser, createUser);
+app.post('/signup', signupValidation, createUser);
 
 app.use('/users', auth, require('./routes/users'));
 
@@ -65,18 +56,6 @@ app.use(errorLogger);
 
 app.use(errors());
 
-app.use((err, req, res, next) => {
-  const { statusCode = 500, message } = err;
-
-  res
-    .status(statusCode)
-    .json({
-      message: statusCode === 500
-        ? 'На сервере произошла ошибка'
-        : message,
-    });
-
-  next();
-});
+app.use(errorHandling);
 
 app.listen(PORT);

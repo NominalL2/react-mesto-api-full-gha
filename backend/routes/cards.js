@@ -1,7 +1,4 @@
 const router = require('express').Router();
-const { celebrate, Joi, Segments } = require('celebrate');
-
-const { linkPattern, idPattern } = require('../constants');
 
 const {
   getCards,
@@ -11,25 +8,19 @@ const {
   dislikeCard,
 } = require('../controllers/cards');
 
-const cardIdValidation = celebrate({
-  [Segments.PARAMS]: Joi.object().keys({
-    cardId: Joi.string().required().regex(idPattern),
-  }),
-});
+const {
+  cardsIdValidation,
+  postCardsValidation,
+} = require('../validation');
 
 router.get('/', getCards);
 
-router.post('/', celebrate({
-  body: Joi.object().keys({
-    name: Joi.string().min(2).max(30).required(),
-    link: Joi.string().required().pattern(linkPattern),
-  }),
-}), postCard);
+router.post('/', postCardsValidation, postCard);
 
-router.delete('/:cardId', cardIdValidation, deleteCard);
+router.delete('/:cardId', cardsIdValidation, deleteCard);
 
-router.put('/:cardId/likes', cardIdValidation, likeCard);
+router.put('/:cardId/likes', cardsIdValidation, likeCard);
 
-router.delete('/:cardId/likes', cardIdValidation, dislikeCard);
+router.delete('/:cardId/likes', cardsIdValidation, dislikeCard);
 
 module.exports = router;

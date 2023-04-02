@@ -9,6 +9,29 @@ const AuthorizationError = require('../errors/AuthorizationError');
 
 const { JWT_SECRET } = require('../constants');
 
+function resultUser(user, res) {
+  if (user) {
+    return res.json(user);
+  }
+  throw new NotFoundError('User not found');
+}
+
+async function findUserById(userId, res) {
+  const user = await User.findById(userId);
+
+  return resultUser(user, res);
+}
+
+async function findUserByIdAndUpdate(userId, res, args) {
+  const newUser = await User.findByIdAndUpdate(
+    userId,
+    args,
+    { new: true, runValidators: true },
+  );
+
+  return resultUser(newUser, res);
+}
+
 module.exports.getUsers = async (req, res, next) => {
   try {
     const users = await User.find();
@@ -22,13 +45,7 @@ module.exports.getUser = async (req, res, next) => {
   const { userId } = req.params;
 
   try {
-    const user = await User.findById(userId);
-
-    if (user) {
-      res.json(user);
-    } else {
-      throw new NotFoundError('User not found');
-    }
+    await findUserById(userId, res);
   } catch (error) {
     if (error.name === 'CastError') {
       next(new IncorrectError('Некорректный Id'));
@@ -42,9 +59,7 @@ module.exports.getMe = async (req, res, next) => {
   const userId = req.user._id;
 
   try {
-    const user = await User.findById(userId);
-
-    res.json(user);
+    await findUserById(userId, res);
   } catch (error) {
     next(error);
   }
@@ -55,17 +70,7 @@ module.exports.patchUser = async (req, res, next) => {
   const userId = req.user._id;
 
   try {
-    const newName = await User.findByIdAndUpdate(
-      userId,
-      { name, about },
-      { new: true, runValidators: true },
-    );
-
-    if (newName) {
-      res.json(newName);
-    } else {
-      throw new NotFoundError('User not found');
-    }
+    await findUserByIdAndUpdate(userId, res, { name, about });
   } catch (error) {
     if (error.name === 'ValidationError') {
       next(new IncorrectError('ValidationError'));
@@ -80,17 +85,7 @@ module.exports.patchUserAvatar = async (req, res, next) => {
   const userId = req.user._id;
 
   try {
-    const newAvatar = await User.findByIdAndUpdate(
-      userId,
-      { avatar },
-      { new: true, runValidators: true },
-    );
-
-    if (newAvatar) {
-      res.json(newAvatar);
-    } else {
-      throw new NotFoundError('User not found');
-    }
+    await findUserByIdAndUpdate(userId, res, { avatar });
   } catch (error) {
     if (error.name === 'ValidationError') {
       next(new IncorrectError('ValidationError'));
